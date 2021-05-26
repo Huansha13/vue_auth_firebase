@@ -3,21 +3,32 @@
     <div class="container-fluid">
       <a href="" class="navbar-brand">Firebase Auth</a>
       <ul class="nav">
-        <li class="nav-item  me-2">
-          <router-link to="/" class="text-white">Home</router-link>
-        </li>
-        <li class="nav-item me-2">
-          <router-link to="/about" class="text-white">About</router-link>
-        </li>
-        <li class="nav-item me-2">
-          <router-link to="/member" class="text-white">Member Area</router-link>
-        </li>
-        <li class="nav-item me-2">
-          <a style="cursor: pointer" class="text-white" @click="logout">Logout</a>
+        <li class="nav-item">
+          <router-link to="/" class="text-white btn">Home</router-link>
         </li>
         <li class="nav-item">
-          <router-link to="/login" class="text-white">Login</router-link>
+          <router-link to="/about" class="text-white btn">About</router-link>
         </li>
+        <li>
+          <template v-if="user.loggedIn">
+            <ul class="nav">
+              <li class="nav-item">
+                <router-link to="/member" class="text-white btn">Member Area</router-link>
+              </li>
+              <li class="nav-item"><a style="cursor: pointer" class="text-white btn" @click="logout">Logout</a></li>
+            </ul>
+          </template>
+          <template v-else>
+            <ul class="nav">
+              <li class="nav-item">
+                <router-link to="/login" class="text-white btn btn-danger">Login</router-link>
+              </li>
+            </ul>
+          </template>
+        </li>
+        <li >
+        </li>
+
       </ul>
     </div>
   </div>
@@ -27,7 +38,10 @@
 </template>
 
 <script>
-import firebase from "firebase";
+import firebase from "firebase/app";
+import { mapGetters } from 'vuex'
+import 'firebase/firestore'
+import 'firebase/auth'
 
 export default {
   data() {
@@ -36,20 +50,20 @@ export default {
       isLogged: false,
     }
   },
-  mounted: function () {
-    this.getCurrentUser();
-  },
+  computed: {
+    ...mapGetters({
+      user: 'user'
+    })
+  }
+  ,
   methods: {
-    getCurrentUser() {
-      this.usr = firebase.auth().onAuthStateChanged();
-      if (this.usr) {
-        this.isLogged = true;
-      }
-    },
     logout() {
-      firebase.auth().signOut().then(
-          () => { this.$router.replace('login') }
-      )
+      firebase
+          .auth()
+          .signOut()
+          .then( () => {
+            this.$router.replace({name: 'Login'})
+          })
     }
   }
 }

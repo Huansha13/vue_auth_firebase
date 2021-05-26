@@ -4,7 +4,9 @@ import router from './router'
 import store from './store'
 
 // IMPORTS EXTERNAL
-import firebase from "firebase";
+import firebase from "firebase/app";
+import 'firebase/firestore'
+import 'firebase/auth'
 const firebaseConfig = {
     apiKey: "AIzaSyDxIhY6tCq3Rq3M_N2bT4dB5GGFzZE3Wm8",
     authDomain: "portafolio-ca0f8.firebaseapp.com",
@@ -16,5 +18,10 @@ const firebaseConfig = {
     measurementId: "G-HCXWBY28C1"
 };
 firebase.initializeApp(firebaseConfig);
-
-createApp(App).use(store).use(router).mount('#app')
+let app;
+firebase.auth().onAuthStateChanged( user => {
+    store.dispatch('fetchUser', user);
+    if (!app) {
+        app =  createApp(App).use(store).use(router).mount('#app')
+    }
+});

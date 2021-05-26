@@ -3,8 +3,8 @@ import Home from '../views/Home.vue'
 import Login from '../views/Login.vue'
 import Signup from '../views/Signup.vue'
 import Member from '../views/Member.vue'
-import firebase from "firebase";
-
+import firebase from "firebase/app";
+import 'firebase/auth';        // for authentication
 const routes = [
   {
     path: '/',

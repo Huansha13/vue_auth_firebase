@@ -26,27 +26,37 @@
           </div>
         </div>
       </form>
-      <pre>
-        {{$data}}
-      </pre>
+      <div class="alert alert-danger d-flex align-items-center" role="alert" v-if="alert">
+        <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg>
+        <div>
+          {{ error }}
+        </div>
+      </div>
+<!--      <pre>-->
+<!--        {{$data}}-->
+<!--      </pre>-->
     </div>
   </div>
 </template>
 
 <script>
-import firebase from "firebase";
+import firebase from "firebase/app";
+import 'firebase/firestore'
+import 'firebase/auth'
 export default {
   data() {
     return {
       email: '',
       password: '',
-      xhrRequest: false
+      xhrRequest: false,
+      alert: false,
+      error: ''
     }
   },
   methods: {
     loginUser() {
       let v = this;
-
+      let a = this;
       v.xhrRequest = true
       firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION)
           .then(() => {
@@ -56,8 +66,9 @@ export default {
                   this.$router.replace('member')
                 },
                 (err) => {
-                  console.log(`Error - ${err.message}`)
                   v.xhrRequest = false;
+                  a.alert = true;
+                  this.error = err.message;
                 }
             );
           })
